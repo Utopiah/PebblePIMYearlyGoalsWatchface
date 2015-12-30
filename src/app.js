@@ -5,7 +5,9 @@ var ajax = require('ajax');
 var Vector2 = require('vector2');
 
 // Create the Window
-var watch = new UI.Window();
+var watch = new UI.Window({
+ fullscreen: true
+});
 
 // Create a background Rect
 var bgRect = new UI.Rect({
@@ -33,7 +35,7 @@ watch.add(title);
 
 // Create TimeText
 var timeText = new UI.TimeText({
-  position: new Vector2(0, 40),
+  position: new Vector2(0, 25),
   size: new Vector2(144, 30),
   text: "%H:%M",
   font: 'bitham-42-bold',
@@ -47,18 +49,42 @@ watch.add(timeText);
 // Show the Window
 watch.show();
 
+function displayGoals(activeGoals){
+
+  for (var goal in activeGoals){
+      
+    
+  var goalText = new UI.Text({
+    position: new Vector2(0, 70),
+    size: new Vector2(144, 168),
+    text: activeGoals[goal],
+    font:'GOTHIC_18',
+    color:'black',
+    textOverflow:'wrap',
+    textAlign:'center',
+    backgroundColor:'white'
+  });
+  
+  watch.add(goalText);
+  console.log("added goal ",activeGoals[goal], " to the watchface.");
+  
+  // Show the Window
+  watch.show();
+  
+  }
+}
 
 var active_goals = [];
 ajax({url: "http://fabien.benetou.fr/YearlyGoals/2016?action=source", type: 'json'},
 function(data) {
-    // Data is supplied here
-      //var goals = JSON.parse(data);
-      var goals = data;
-      console.log("goals:", goals);
+  // FAIL console.log(JSON.parse(data));
+      var goals = data[0];
       for (var goal in goals){
-        console.log(goals[goal]);
         active_goals.push(goals[goal]);
+        // does not seem to actively split in goals...
+        // JSON.parse() does not help as it fails
       }
+      displayGoals(active_goals);
   },
   function(error) {
     console.log('Ajax failed: ' + error);
