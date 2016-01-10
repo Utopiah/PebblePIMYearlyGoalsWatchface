@@ -109,9 +109,10 @@ var watch = new UI.Window({
   fullscreen: true
 });
 
+var width = 3; //(close to 200 entire screen / 3 goals /12 months);
+var height = 170;
+
 function GoalVizMonthlyTick(window, offset, color){
-  var width = 3; //(close to 200 entire screen / 3 goals /12 months);
-  var height = 170;
   for (var i=0;i<12;i++){
     // Create a background Rect  
     var monthlyBar = new UI.Rect({
@@ -124,9 +125,29 @@ function GoalVizMonthlyTick(window, offset, color){
   }
 }
 
+// TODO fetch via AJAX based on PIM data (eventually via API e.g. MisFit)
+var done = [];
+done.push([[0,1,1,1,1,0,0,0,1,1,1,1]]);
+done.push([[1,1,1,1,1,1,1,1,1,0,0,1]]);
+done.push([[0,1,1,1,1,0,0,0,0,0,0,1]]);
+
+function GoalVizMonthlyTickDone(window, offset, dailDone){
+  for (var i=0;i<=month;i++){
+    for (var j=0;j<=dailDone[i].length;j++){
+    if (dailDone[i][j]) {
+      var nowRect = new UI.Rect({
+        position: new Vector2(offset + width*i, Math.round(j*height/31)),
+        size: new Vector2(width, Math.round(height/31)),
+        backgroundColor: 'green',
+        borderColor: 'green'
+      });
+      window.add(nowRect);
+    }
+    }
+  }
+}
+
 function GoalVizMonthlyTickPos(window, offset){
-  var width = 3; //(close to 200 entire screen / 3 goals /12 months);
-  var height = 170;
   var pos = Math.round(day*height/31);
   for (var i=0;i<12;i++){
     if (i==month){
@@ -166,6 +187,7 @@ var columnWidth = 37;
 var columnColors = ['orange', 'rajah', 'chromeYellow'];
 for (var i=0;i<3;i++){
   GoalVizMonthlyTick(watch, start+columnWidth*i, columnColors[i]);
+  GoalVizMonthlyTickDone(watch, start+columnWidth*i, done[i]);
 }
 
 watch.add(title);
